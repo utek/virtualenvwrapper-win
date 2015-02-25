@@ -18,9 +18,18 @@ echo ===========================================================================
 dir /b /ad "%WORKON_HOME%"
 goto END
 
+REM simple platform assumption
+REM using only for checking for Scripts/bin difference
+if exist "%~dp0..\pypy.exe" (
+  set "SCRIPTS_FOLDER=bin"
+) else (
+  set "SCRIPTS_FOLDER=Scripts"
+)
+
+
 :WORKON
 if defined VIRTUAL_ENV (
-    call "%VIRTUAL_ENV%\Scripts\deactivate.bat"
+    call "%VIRTUAL_ENV%\%SCRIPTS_FOLDER%\deactivate.bat"
 )
 
 pushd "%WORKON_HOME%" 2>NUL && popd
@@ -36,7 +45,7 @@ if errorlevel 1 (
     goto END
 )
 
-if not exist "%WORKON_HOME%\%1\Scripts\activate.bat" (
+if not exist "%WORKON_HOME%\%1\%SCRIPTS_FOLDER%\activate.bat" (
     echo.
     echo.    %WORKON_HOME%\%1
     echo.    doesn't contain a virtualenv ^(yet^).
@@ -44,7 +53,7 @@ if not exist "%WORKON_HOME%\%1\Scripts\activate.bat" (
     goto END
 )
 
-call "%WORKON_HOME%\%1\Scripts\activate.bat"
+call "%WORKON_HOME%\%1\%SCRIPTS_FOLDER%\activate.bat"
 if defined WORKON_OLDTITLE (
     title %1 ^(VirtualEnv^)
 )
